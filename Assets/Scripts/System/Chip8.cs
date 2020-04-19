@@ -18,6 +18,7 @@ public class Chip8
     // RAM
     public byte[] ram  { protected set; get; }
 
+    public const short PROGRAM_START = 0x200;
 
     /// =============================================
     /// <summary>
@@ -54,8 +55,20 @@ public class Chip8
         this.sound = 0;
         this.delay = 0;
 
-        this.programCounter = 0x200;
+        this.programCounter = PROGRAM_START;
         this.stackPointer = 0;
+    }
+
+    /// =============================================
+    public void LoadProgram(byte[] program)
+    {
+        int index = PROGRAM_START;
+        foreach(var data in program)
+        {
+            this.ram[index] = data;
+
+            index++;
+        }
     }
 
     /// =============================================
