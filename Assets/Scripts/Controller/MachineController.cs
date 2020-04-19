@@ -8,7 +8,12 @@ public class MachineController : MonoBehaviour
     [Tooltip("Relative file path from StreamingAssets")]
     public string filePath;
 
+    [Header("Hook debugger")]
+    public bool hookDebugger = false;
+
     private Chip8 machine;
+
+    private MachineDebugger debugger;
 
     /// ============================================
     /// <summary>
@@ -22,5 +27,17 @@ public class MachineController : MonoBehaviour
         byte[] program = File.ReadAllBytes(path);
 
         this.machine.LoadProgram(program);
+
+        if (this.hookDebugger)
+        {
+            this.debugger = FindObjectOfType<MachineDebugger>();
+            this.debugger.machine = this.machine;
+        }
+    }
+
+    /// ============================================
+    void Update()
+    {
+        this.machine.Tick();
     }
 }

@@ -81,5 +81,11 @@ public class Chip8
         // Decode instruction
         // Execute instruction
         // Advance program counter
+        this.programCounter += 2;
+
+        if (this.programCounter > this.ram.Length)
+        {
+            this.programCounter = PROGRAM_START;
+        }
     }
 }
