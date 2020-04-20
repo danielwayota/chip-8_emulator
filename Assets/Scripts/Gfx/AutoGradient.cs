@@ -4,6 +4,8 @@ public class AutoGradient : MonoBehaviour
 {
     public Gradient gradient;
 
+    public string shaderName = "_Color";
+
     private void OnEnable()
     {
         float percent = (this.transform.localPosition.y + 16f) / 32f;
@@ -11,6 +13,6 @@ public class AutoGradient : MonoBehaviour
         var color = this.gradient.Evaluate(percent);
 
         var renderer = this.GetComponentInChildren<MeshRenderer>();
-        renderer.material.SetColor("_Color", color);
+        renderer.material.SetColor(this.shaderName, color);
     }
 }
