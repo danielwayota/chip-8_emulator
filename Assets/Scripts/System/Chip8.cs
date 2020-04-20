@@ -154,11 +154,9 @@ public class Chip8
     public void ExecuteOpCode(short opCode)
     {
         // Decode instruction
-
-        // Execute instruction
-
         byte codeIndex = (byte)((opCode & 0xF000) >> 12);
 
+        // Execute instruction
         switch (codeIndex)
         {
             case 0:
@@ -190,6 +188,10 @@ public class Chip8
                 {
                     var nnn = (short) (opCode & 0xFFF);
                     this.programCounter = nnn;
+
+                    // NOTE: after every instruction, the program counter is increased, so
+                    //  this is to avoid problems.
+                    this.programCounter -= 2;
                 }
                 break;
 
@@ -204,6 +206,10 @@ public class Chip8
 
                     var nnn = (short) (opCode & 0xFFF);
                     this.programCounter = nnn;
+
+                    // NOTE: after every instruction, the program counter is increased, so
+                    //  this is to avoid problems.
+                    this.programCounter -= 2;
                 }
                 break;
 
@@ -452,6 +458,10 @@ public class Chip8
                     var v0 = this.v[0];
 
                     this.programCounter = (short)(nnn + v0);
+
+                    // NOTE: after every instruction, the program counter is increased, so
+                    //  this is to avoid problems.
+                    this.programCounter -= 2;
                 }
                 break;
             case 0xC:
