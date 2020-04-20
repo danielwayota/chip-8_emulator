@@ -5,18 +5,16 @@ public class ImageRenderer : BaseUnityRenderer
 {
     public Image target;
 
-    public Vector2Int bufferSize;
-
     private Texture2D drawTexture;
-
-    private byte[,] collisionBuffer;
 
     /// ==============================================
     /// <summary>
     ///
     /// </summary>
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         this.drawTexture = new Texture2D(
             this.bufferSize.x,
             this.bufferSize.y,
@@ -32,15 +30,7 @@ public class ImageRenderer : BaseUnityRenderer
             new Vector3(.5f, .5f)
         );
 
-        this.collisionBuffer = new byte[this.bufferSize.x, this.bufferSize.y];
-
         this.Clear();
-    }
-
-    /// ==============================================
-    void Update()
-    {
-
     }
 
     /// ==============================================
@@ -67,37 +57,22 @@ public class ImageRenderer : BaseUnityRenderer
     /// ==============================================
     public override int DrawSpriteByte(byte data, int x, int y)
     {
-        // Wrap coordinates
-        y %= this.drawTexture.height;
-
-        y = (this.drawTexture.height -1) - y;
-
-        int hasBeenSomeCollsion = 0;
-
-        for (int xoffset = 0; xoffset < 8; xoffset++)
-        {
-            if ((data & (0x80 >> xoffset)) != 0)
-            {
-                int xx = (x + xoffset) % this.drawTexture.width;
-                int collisionData = this.collisionBuffer[xx, y];
-
-                if (collisionData != 0)
-                {
-                    hasBeenSomeCollsion = 1;
-
-                    this.collisionBuffer[xx, y] = 0;
-                    this.drawTexture.SetPixel(xx, y, Color.black);
-                }
-                else
-                {
-                    this.collisionBuffer[xx, y] = 1;
-                    this.drawTexture.SetPixel(xx, y, Color.white);
-                }
-            }
-        }
+        var collision = base.DrawSpriteByte(data, x, y);
 
         this.drawTexture.Apply();
 
-        return hasBeenSomeCollsion;
+        return collision;
+    }
+
+    /// ==============================================
+    public override void DrawPixel(int x, int y)
+    {
+        this.drawTexture.SetPixel(x, y, Color.white);
+    }
+
+    /// ==============================================
+    public override void ErasePixel(int x, int y)
+    {
+        this.drawTexture.SetPixel(x, y, Color.black);
     }
 }
