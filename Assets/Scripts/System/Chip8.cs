@@ -510,7 +510,7 @@ public class Chip8
                         voffset ++;
                     }
 
-                    this.v[0xF] = (byte)(collision & 0xFF);
+                    this.v[0xF] = (byte)collision;
                 }
 
                 break;

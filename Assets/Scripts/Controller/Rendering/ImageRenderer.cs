@@ -9,7 +9,7 @@ public class ImageRenderer : BaseUnityRenderer
 
     private Texture2D drawTexture;
 
-    private byte[] collisionBuffer;
+    private byte[,] collisionBuffer;
 
     /// ==============================================
     /// <summary>
@@ -32,7 +32,7 @@ public class ImageRenderer : BaseUnityRenderer
             new Vector3(.5f, .5f)
         );
 
-        this.collisionBuffer = new byte[this.bufferSize.x * this.bufferSize.y];
+        this.collisionBuffer = new byte[this.bufferSize.x, this.bufferSize.y];
 
         this.Clear();
     }
@@ -50,7 +50,14 @@ public class ImageRenderer : BaseUnityRenderer
         for(int i = 0; i < colors.Length; i++)
         {
             colors[i] = Color.black;
-            this.collisionBuffer[i] = 0x00;
+        }
+
+        for (int x = 0; x < this.bufferSize.x; x++)
+        {
+            for (int y = 0; y < this.bufferSize.y; y++)
+            {
+                this.collisionBuffer[x, y] = 0;
+            }
         }
 
         this.drawTexture.SetPixels(colors);
@@ -65,35 +72,28 @@ public class ImageRenderer : BaseUnityRenderer
 
         y = (this.drawTexture.height -1) - y;
 
-        int mask = 128; // 0b10000000
-
         int hasBeenSomeCollsion = 0;
 
         for (int xoffset = 0; xoffset < 8; xoffset++)
         {
-            int xx = (x + xoffset) % this.drawTexture.width;
-            int collisionIndex = (y * this.drawTexture.width + xx);
-
-            if (collisionIndex >= this.collisionBuffer.Length)
+            if ((data & (0x80 >> xoffset)) != 0)
             {
-                throw new System.Exception($"{collisionIndex}");
-            }
+                int xx = (x + xoffset) % this.drawTexture.width;
+                int collisionData = this.collisionBuffer[xx, y];
 
-            int collisionData = this.collisionBuffer[collisionIndex];
-            int spritePixel = (data & mask) != 0 ? 1 : 0;
+                if (collisionData != 0)
+                {
+                    hasBeenSomeCollsion = 1;
 
-            hasBeenSomeCollsion |= collisionData & spritePixel;
-
-            int shouldDraw = collisionData ^ spritePixel;
-            if (shouldDraw != 0)
-            {
-                this.drawTexture.SetPixel(x + xoffset, y, Color.white);
+                    this.collisionBuffer[xx, y] = 0;
+                    this.drawTexture.SetPixel(xx, y, Color.black);
+                }
+                else
+                {
+                    this.collisionBuffer[xx, y] = 1;
+                    this.drawTexture.SetPixel(xx, y, Color.white);
+                }
             }
-            else
-            {
-                this.drawTexture.SetPixel(x + xoffset, y, Color.black);
-            }
-            mask >>= 1;
         }
 
         this.drawTexture.Apply();
