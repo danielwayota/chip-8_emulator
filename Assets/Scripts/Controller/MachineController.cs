@@ -8,8 +8,11 @@ public class MachineController : MonoBehaviour
     [Tooltip("Relative file path from StreamingAssets")]
     public string filePath;
 
-    [Header("Hook debugger")]
+    public BaseUnityRenderer machineScreen;
+
+    [Header("Debug")]
     public bool hookDebugger = false;
+    public bool singleStep = false;
 
     private Chip8 machine;
 
@@ -22,6 +25,8 @@ public class MachineController : MonoBehaviour
     void Start()
     {
         this.machine = new Chip8();
+
+        this.machine.screen = this.machineScreen;
 
         var path = Path.Combine(Application.streamingAssetsPath, this.filePath);
         byte[] program = File.ReadAllBytes(path);
@@ -38,6 +43,16 @@ public class MachineController : MonoBehaviour
     /// ============================================
     void Update()
     {
-        this.machine.Tick();
+        if (singleStep)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                this.machine.Tick();
+            }
+        }
+        else
+        {
+            this.machine.Tick();
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ImageScreen : MonoBehaviour, IScreen
+public class ImageRenderer : BaseUnityRenderer
 {
     public Image target;
 
@@ -34,7 +34,12 @@ public class ImageScreen : MonoBehaviour, IScreen
     }
 
     /// ==============================================
-    public void Clear()
+    void Update()
+    {
+
+    }
+
+    public override void Clear()
     {
         Color[] colors = new Color[this.bufferSize.x * this.bufferSize.y];
         for(int i = 0; i < colors.Length; i++)
@@ -44,11 +49,5 @@ public class ImageScreen : MonoBehaviour, IScreen
 
         this.drawTexture.SetPixels(colors);
         this.drawTexture.Apply();
-    }
-
-    /// ==============================================
-    void Update()
-    {
-
     }
 }

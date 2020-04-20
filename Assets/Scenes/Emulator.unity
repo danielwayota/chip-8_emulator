@@ -422,7 +422,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filePath: PONG
+  machineScreen: {fileID: 1962040055}
   hookDebugger: 1
+  singleStep: 1
 --- !u!4 &865890329
 Transform:
   m_ObjectHideFlags: 0
@@ -665,7 +667,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Memory dump
 --- !u!222 &1067920742
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -978,7 +980,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1962040050}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d3f162f974db514faa15fafdea71a61, type: 3}
+  m_Script: {fileID: 11500000, guid: f157c23ffc7120144bd5bd6ac4e2ee62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 438840261}
