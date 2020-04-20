@@ -487,6 +487,135 @@ public class Chip8
                 }
 
                 break;
+
+            case 0xE:
+                int subECode = opCode & 0xFF;
+                switch (subECode)
+                {
+                    case 0x9E:
+                        // TODO: Input
+                        // Ex9E - SKP Vx
+                        // Skip next instruction if key with the value of Vx is pressed.
+
+                        // Checks the keyboard, and if the key corresponding to the value of Vx is currently
+                        // in the down position, PC is increased by 2.
+                        break;
+                    case 0xA1:
+                        // TODO: input
+                        // ExA1 - SKNP Vx
+                        // Skip next instruction if key with the value of Vx is not pressed.
+
+                        // Checks the keyboard, and if the key corresponding to the value of Vx is currently in the up position,
+                        // PC is increased by 2.
+                        break;
+                }
+                break;
+            case 0xF:
+                int subFCode = opCode & 0xFF;
+
+                switch (subFCode)
+                {
+                    case 0x07:
+                        // Fx07 - LD Vx, DT
+                        // Set Vx = delay timer value.
+
+                        // The value of DT is placed into Vx.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+
+                            this.v[x] = this.delay;
+                        }
+                        break;
+                    case 0x0A:
+                        // TODO: input
+                        // Fx0A - LD Vx, K
+                        // Wait for a key press, store the value of the key in Vx.
+                        // All execution stops until a key is pressed, then the value of that key is stored in Vx.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+                        }
+                        break;
+                    case 0x15:
+                        // Fx15 - LD DT, Vx
+                        // Set delay timer = Vx.
+                        // DT is set equal to the value of Vx.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+                            this.delay = this.v[x];
+                        }
+                        break;
+                    case 0x18:
+                        // TODO: sound
+                        // Fx18 - LD ST, Vx
+                        // Set sound timer = Vx.
+
+                        // ST is set equal to the value of Vx.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+                            this.sound = this.v[x];
+                        }
+                        break;
+                    case 0x1E:
+                        // Fx1E - ADD I, Vx
+                        // Set I = I + Vx.
+
+                        // The values of I and Vx are added, and the results are stored in I.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+
+                            this.i = (short)(this.i + this.v[x]);
+                        }
+                        break;
+
+                    case 0x29:
+                        // Fx29 - LD F, Vx
+                        // Set I = location of sprite for digit Vx.
+
+                        // The value of I is set to the location for the hexadecimal sprite corresponding to the value of Vx.
+                        {
+                            // TODO: sad
+                            var x = (opCode & 0xF00) >> 8;
+                        }
+                        break;
+                    case 0x33:
+                        // TODO: finish this
+                        // Fx33 - LD B, Vx
+                        // Store BCD representation of Vx in memory locations I, I+1, and I+2.
+
+                        // The interpreter takes the decimal value of Vx, and places the hundreds digit in memory
+                        // at location in I, the tens digit at location I+1, and the ones digit at location I+2.
+                        break;
+
+                    case 0x55:
+                        // Fx55 - LD [I], Vx
+                        // Store registers V0 through Vx in memory starting at location I.
+                        // The interpreter copies the values of registers V0 through Vx into memory, starting at the address in I.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+
+                            for (int offset = 0; offset < x; offset++)
+                            {
+                                this.ram[this.i + offset] = this.v[offset];
+                            }
+                        }
+                        break;
+
+                    case 0x65:
+                        // Fx65 - LD Vx, [I]
+                        // Read registers V0 through Vx from memory starting at location I.
+                        // The interpreter reads values from memory starting at location I into registers V0 through Vx.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+
+                            for (int offset = 0; offset < x; offset++)
+                            {
+                                this.v[offset] = this.ram[this.i + offset];
+                            }
+                        }
+                        break;
+
+                }
+                break;
         }
     }
 }
