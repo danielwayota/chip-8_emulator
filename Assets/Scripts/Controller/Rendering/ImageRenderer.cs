@@ -61,10 +61,9 @@ public class ImageRenderer : BaseUnityRenderer
     public override int DrawSpriteByte(byte data, int x, int y)
     {
         // Wrap coordinates
-        x %= this.drawTexture.width;
         y %= this.drawTexture.height;
 
-        y = this.drawTexture.height - y;
+        y = (this.drawTexture.height -1) - y;
 
         int mask = 128; // 0b10000000
 
@@ -72,7 +71,13 @@ public class ImageRenderer : BaseUnityRenderer
 
         for (int xoffset = 0; xoffset < 8; xoffset++)
         {
-            int collisionIndex = (y * this.drawTexture.width + (x + xoffset)) % this.collisionBuffer.Length;
+            int xx = (x + xoffset) % this.drawTexture.width;
+            int collisionIndex = (y * this.drawTexture.width + xx);
+
+            if (collisionIndex >= this.collisionBuffer.Length)
+            {
+                throw new System.Exception($"{collisionIndex}");
+            }
 
             int collisionData = this.collisionBuffer[collisionIndex];
             int spritePixel = (data & mask) != 0 ? 1 : 0;

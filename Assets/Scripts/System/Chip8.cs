@@ -480,7 +480,6 @@ public class Chip8
                 // the coordinates of the display, it wraps around to the opposite side of the screen.
                 // See instruction 8xy3 for more information on XOR.
                 {
-                    // TODO: finish this
                     var x = (opCode & 0xF00) >> 8;
                     var y = (opCode & 0xF0) >> 4;
                     var n = (opCode & 0xF);
