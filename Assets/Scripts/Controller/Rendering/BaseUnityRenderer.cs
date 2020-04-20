@@ -47,9 +47,20 @@ public abstract class BaseUnityRenderer : MonoBehaviour, IRenderer
         return hasBeenSomeCollsion;
     }
 
+    /// ================================================
+    public virtual void Clear()
+    {
+        for (int x = 0; x < this.bufferSize.x; x++)
+        {
+            for (int y = 0; y < this.bufferSize.y; y++)
+            {
+                this.collisionBuffer[x, y] = 0;
+            }
+        }
+
+    }
+
+    /// ================================================
     public abstract void DrawPixel(int x, int y);
     public abstract void ErasePixel(int x, int y);
-
-    /// ==============================================
-    public abstract void Clear();
 }

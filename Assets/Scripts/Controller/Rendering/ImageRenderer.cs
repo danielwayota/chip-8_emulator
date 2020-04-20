@@ -36,18 +36,12 @@ public class ImageRenderer : BaseUnityRenderer
     /// ==============================================
     public override void Clear()
     {
+        base.Clear();
+
         Color[] colors = new Color[this.bufferSize.x * this.bufferSize.y];
         for(int i = 0; i < colors.Length; i++)
         {
             colors[i] = Color.black;
-        }
-
-        for (int x = 0; x < this.bufferSize.x; x++)
-        {
-            for (int y = 0; y < this.bufferSize.y; y++)
-            {
-                this.collisionBuffer[x, y] = 0;
-            }
         }
 
         this.drawTexture.SetPixels(colors);
