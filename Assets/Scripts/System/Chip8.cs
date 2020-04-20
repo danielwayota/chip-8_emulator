@@ -673,9 +673,9 @@ public class Chip8
                             int num = this.v[x];
 
                             int hundreds = num / 100;
-                            num -= hundreds;
+                            num -= hundreds * 100;
                             int tens = num / 10;
-                            num -= tens;
+                            num -= tens * 10;
                             int ones = num;
 
                             this.ram[this.i + 0] = (byte)hundreds;
@@ -691,7 +691,7 @@ public class Chip8
                         {
                             var x = (opCode & 0xF00) >> 8;
 
-                            for (int offset = 0; offset < x; offset++)
+                            for (int offset = 0; offset <= x; offset++)
                             {
                                 this.ram[this.i + offset] = this.v[offset];
                             }
@@ -705,7 +705,7 @@ public class Chip8
                         {
                             var x = (opCode & 0xF00) >> 8;
 
-                            for (int offset = 0; offset < x; offset++)
+                            for (int offset = 0; offset <= x; offset++)
                             {
                                 this.v[offset] = this.ram[this.i + offset];
                             }
