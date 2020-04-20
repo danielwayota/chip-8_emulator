@@ -84,11 +84,11 @@ public class Chip8
     public void LoadCharacterSprites()
     {
         byte[] characterSprites = {
-            // 0
+            // 0 - 0
             0xF0, 0x90, 0x90, 0x90, 0xF0,
-            // 1
+            // 1 - 5
             0x20, 0x60, 0x20, 0x20, 0x70,
-            // 2
+            // 2 - 10
             0xF0, 0x10, 0xF0, 0x80, 0xF0,
             // 3
             0xF0, 0x10, 0xF0, 0x10, 0xF0,
@@ -416,7 +416,7 @@ public class Chip8
                         {
                             var x = (opCode & 0xF00) >> 8;
 
-                            this.v[0xF] = (byte)((this.v[x] & 0b10000000) >> 7);
+                            this.v[0xF] = (byte)((this.v[x] >> 7) & 0x01);
 
                             this.v[x] = (byte)(this.v[x] << 1);
                         }
@@ -600,17 +600,32 @@ public class Chip8
 
                         // The value of I is set to the location for the hexadecimal sprite corresponding to the value of Vx.
                         {
-                            // TODO: sad
                             var x = (opCode & 0xF00) >> 8;
+
+                            this.i = (short)(this.v[x] * 5);
                         }
                         break;
                     case 0x33:
-                        // TODO: finish this
                         // Fx33 - LD B, Vx
                         // Store BCD representation of Vx in memory locations I, I+1, and I+2.
 
                         // The interpreter takes the decimal value of Vx, and places the hundreds digit in memory
                         // at location in I, the tens digit at location I+1, and the ones digit at location I+2.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+
+                            int num = this.v[x];
+
+                            int hundreds = num / 100;
+                            num -= hundreds;
+                            int tens = num / 10;
+                            num -= tens;
+                            int ones = num;
+
+                            this.ram[this.i + 0] = (byte)hundreds;
+                            this.ram[this.i + 1] = (byte)tens;
+                            this.ram[this.i + 2] = (byte)ones;
+                        }
                         break;
 
                     case 0x55:
