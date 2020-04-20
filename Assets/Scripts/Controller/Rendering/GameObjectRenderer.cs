@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class GameObjectRenderer : BaseUnityRenderer
 {
+    public Transform pseudoPixelAnchor;
     public GameObject pseudoPixelPrefab;
     public Vector2 pseudoPixelSize;
 
@@ -34,6 +35,8 @@ public class GameObjectRenderer : BaseUnityRenderer
 
         var go = Instantiate(this.pseudoPixelPrefab);
         this.pseudoPixelPool.Add(go);
+
+        go.transform.parent = this.pseudoPixelAnchor;
 
         return go;
     }
@@ -74,7 +77,8 @@ public class GameObjectRenderer : BaseUnityRenderer
     {
         var pseudoPixel = this.GetNextPseudoPixel();
 
-        pseudoPixel.transform.position = this.MapPixelPosition(x, y);
+        pseudoPixel.transform.localPosition = this.MapPixelPosition(x, y);
+        pseudoPixel.SetActive(true);
 
         this.screen[x, y] = pseudoPixel;
     }
