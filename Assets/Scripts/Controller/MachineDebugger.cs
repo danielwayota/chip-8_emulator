@@ -48,7 +48,7 @@ public class MachineDebugger : MonoBehaviour
     /// =============================================
     void ReadRam()
     {
-        int length = this.machine.ram.Length;
+        int length = (this.machine.programCounter + 5) % this.machine.ram.Length;
 
         this.memoryDump.text = "";
         for (int i = this.machine.programCounter; i < length; i++)
@@ -70,7 +70,7 @@ public class MachineDebugger : MonoBehaviour
         this.vDump.text = "";
         for (int i = 0; i < length; i++)
         {
-            var index = i.ToString("X2");
+            var index = i.ToString("X");
             var value = this.machine.v[i].ToString("X2");
 
             this.vDump.text += $"V{index} : {value}\n";
@@ -88,7 +88,7 @@ public class MachineDebugger : MonoBehaviour
 
         for (int i = 0; i < length; i++)
         {
-            var value = this.machine.stack[i].ToString("X2");
+            var value = this.machine.stack[i].ToString("X4");
 
             if (ptr == i)
             {
@@ -104,8 +104,8 @@ public class MachineDebugger : MonoBehaviour
     /// =============================================
     void ReadRegisters()
     {
-        var i = this.machine.i.ToString("X2");
-        var pc = this.machine.programCounter.ToString("X2");
+        var i = this.machine.i.ToString("X4");
+        var pc = this.machine.programCounter.ToString("X4");
 
         this.registersDump.text = $"I: {i} - PC: {pc}";
     }
