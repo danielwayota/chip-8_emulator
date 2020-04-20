@@ -493,12 +493,15 @@ public class Chip8
                     }
 
                     int voffset = 0;
+                    int collision = 0;
                     foreach (var data in spriteBytes)
                     {
-                        this.screen.DrawSpriteByte(data, this.v[x], this.v[y] + voffset);
+                        collision |= this.screen.DrawSpriteByte(data, this.v[x], this.v[y] + voffset);
 
                         voffset ++;
                     }
+
+                    this.v[0xF] = (byte)(collision & 0xFF);
                 }
 
                 break;

@@ -421,9 +421,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9db971595598e0428a2eb387a733764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePath: demos/Stars.ch8
+  filePath: MAZE
   machineScreen: {fileID: 1962040055}
-  hookDebugger: 1
+  hookDebugger: 0
   singleStep: 0
 --- !u!4 &865890329
 Transform:

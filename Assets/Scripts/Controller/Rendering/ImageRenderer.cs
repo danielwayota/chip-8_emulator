@@ -49,7 +49,7 @@ public class ImageRenderer : BaseUnityRenderer
         Color[] colors = new Color[this.bufferSize.x * this.bufferSize.y];
         for(int i = 0; i < colors.Length; i++)
         {
-            colors[i] = new Color(0, 0, 0, 0.8f);
+            colors[i] = Color.black;
             this.collisionBuffer[i] = 0x00;
         }
 
@@ -64,20 +64,35 @@ public class ImageRenderer : BaseUnityRenderer
         x %= this.drawTexture.width;
         y %= this.drawTexture.height;
 
+        y = this.drawTexture.height - y;
+
         int mask = 128; // 0b10000000
+
+        int hasBeenSomeCollsion = 0;
 
         for (int xoffset = 0; xoffset < 8; xoffset++)
         {
-            if ((data & mask) != 0)
+            int collisionIndex = (y * this.drawTexture.width + (x + xoffset)) % this.collisionBuffer.Length;
+
+            int collisionData = this.collisionBuffer[collisionIndex];
+            int spritePixel = (data & mask) != 0 ? 1 : 0;
+
+            hasBeenSomeCollsion |= collisionData & spritePixel;
+
+            int shouldDraw = collisionData ^ spritePixel;
+            if (shouldDraw != 0)
             {
                 this.drawTexture.SetPixel(x + xoffset, y, Color.white);
+            }
+            else
+            {
+                this.drawTexture.SetPixel(x + xoffset, y, Color.black);
             }
             mask >>= 1;
         }
 
         this.drawTexture.Apply();
 
-        // TODO: collision
-        return 0;
+        return hasBeenSomeCollsion;
     }
 }
