@@ -18,6 +18,19 @@ public class MachineController : MonoBehaviour
 
     private MachineDebugger debugger;
 
+    // Original keyboard
+    // 1  2  3  C
+    // 4  5  6  D
+    // 7  8  9  E
+    // A  0  B  F
+
+    private KeyCode[] keyCodes = new KeyCode[] {
+        KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha3,
+        KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
+        KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F,
+        KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V,
+    };
+
     /// ============================================
     /// <summary>
     ///
@@ -43,6 +56,20 @@ public class MachineController : MonoBehaviour
     /// ============================================
     void Update()
     {
+        byte i = 0;
+        foreach (var key in this.keyCodes)
+        {
+            if (Input.GetKeyUp(key))
+            {
+                this.machine.InputUp(i);
+            }
+            else if (Input.GetKeyDown(key))
+            {
+                this.machine.InputDown(i);
+            }
+            i++;
+        }
+
         if (singleStep)
         {
             if (Input.GetKeyDown(KeyCode.Space))

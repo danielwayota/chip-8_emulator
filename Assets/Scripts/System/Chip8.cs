@@ -22,9 +22,11 @@ public class Chip8
     public byte stackPointer { protected set; get; }
 
     // RAM
-    public byte[] ram  { protected set; get; }
+    public byte[] ram { protected set; get; }
 
     public IRenderer screen;
+
+    protected byte[] keyboard;
 
     public const short PROGRAM_START = 0x200;
 
@@ -42,6 +44,8 @@ public class Chip8
 
         // The RAM is 4KB long
         this.ram = new byte[4096];
+
+        this.keyboard = new byte[16];
 
         this.LoadCharacterSprites();
         this.Restart();
@@ -72,7 +76,7 @@ public class Chip8
     public void LoadProgram(byte[] program)
     {
         int index = PROGRAM_START;
-        foreach(var data in program)
+        foreach (var data in program)
         {
             this.ram[index] = data;
 
@@ -148,6 +152,28 @@ public class Chip8
         {
             this.programCounter = PROGRAM_START;
         }
+
+        if (this.delay != 0)
+        {
+            this.delay--;
+        }
+
+        if (this.sound != 0)
+        {
+            this.sound--;
+        }
+    }
+
+    /// =============================================
+    public void InputDown(byte keyCode)
+    {
+        this.keyboard[keyCode] = 1;
+    }
+
+    /// =============================================
+    public void InputUp(byte keyCode)
+    {
+        this.keyboard[keyCode] = 0;
     }
 
     /// =============================================
@@ -186,7 +212,7 @@ public class Chip8
                 // Jump to location nnn.
                 // The interpreter sets the program counter to nnn.
                 {
-                    var nnn = (short) (opCode & 0xFFF);
+                    var nnn = (short)(opCode & 0xFFF);
                     this.programCounter = nnn;
 
                     // NOTE: after every instruction, the program counter is increased, so
@@ -204,7 +230,7 @@ public class Chip8
                     // then puts the current PC on the top of the stack. The PC is then set to nnn.
                     this.stack[this.stackPointer] = this.programCounter;
 
-                    var nnn = (short) (opCode & 0xFFF);
+                    var nnn = (short)(opCode & 0xFFF);
                     this.programCounter = nnn;
 
                     // NOTE: after every instruction, the program counter is increased, so
@@ -444,7 +470,7 @@ public class Chip8
                 // Set I = nnn.
                 // The value of register I is set to nnn.
                 {
-                    var nnn = (short) (opCode & 0xFFF);
+                    var nnn = (short)(opCode & 0xFFF);
                     this.i = nnn;
                 }
                 break;
@@ -498,7 +524,7 @@ public class Chip8
 
                     for (int offset = 0; offset < n; offset++)
                     {
-                        spriteBytes[offset] = this.ram[this.i  + offset];
+                        spriteBytes[offset] = this.ram[this.i + offset];
                     }
 
                     int voffset = 0;
@@ -507,7 +533,7 @@ public class Chip8
                     {
                         collision |= this.screen.DrawSpriteByte(data, this.v[x], this.v[y] + voffset);
 
-                        voffset ++;
+                        voffset++;
                     }
 
                     this.v[0xF] = (byte)collision;
@@ -520,20 +546,32 @@ public class Chip8
                 switch (subECode)
                 {
                     case 0x9E:
-                        // TODO: Input
                         // Ex9E - SKP Vx
                         // Skip next instruction if key with the value of Vx is pressed.
 
                         // Checks the keyboard, and if the key corresponding to the value of Vx is currently
                         // in the down position, PC is increased by 2.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+                            if (this.keyboard[this.v[x]] != 0)
+                            {
+                                this.programCounter += 2;
+                            }
+                        }
                         break;
                     case 0xA1:
-                        // TODO: input
                         // ExA1 - SKNP Vx
                         // Skip next instruction if key with the value of Vx is not pressed.
 
                         // Checks the keyboard, and if the key corresponding to the value of Vx is currently in the up position,
                         // PC is increased by 2.
+                        {
+                            var x = (opCode & 0xF00) >> 8;
+                            if (this.keyboard[this.v[x]] == 0)
+                            {
+                                this.programCounter += 2;
+                            }
+                        }
                         break;
                 }
                 break;
@@ -554,12 +592,30 @@ public class Chip8
                         }
                         break;
                     case 0x0A:
-                        // TODO: input
                         // Fx0A - LD Vx, K
                         // Wait for a key press, store the value of the key in Vx.
                         // All execution stops until a key is pressed, then the value of that key is stored in Vx.
                         {
                             var x = (opCode & 0xF00) >> 8;
+
+                            bool done = false;
+
+                            byte keyIndex = 0;
+                            foreach (var key in this.keyboard)
+                            {
+                                if (key != 0)
+                                {
+                                    this.v[x] = keyIndex;
+                                    done = true;
+                                    break;
+                                }
+                                keyIndex++;
+                            }
+
+                            if (!done)
+                            {
+                                this.programCounter -= 2;
+                            }
                         }
                         break;
                     case 0x15:
