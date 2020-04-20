@@ -410,7 +410,7 @@ public class Chip8
                         {
                             var x = (opCode & 0xF00) >> 8;
 
-                            this.v[0xF] = (byte)((this.v[x] & 0x10000000) >> 7);
+                            this.v[0xF] = (byte)((this.v[x] & 0b10000000) >> 7);
 
                             this.v[x] = (byte)(this.v[x] << 1);
                         }
@@ -484,6 +484,21 @@ public class Chip8
                     var x = (opCode & 0xF00) >> 8;
                     var y = (opCode & 0xF0) >> 4;
                     var n = (opCode & 0xF);
+
+                    byte[] spriteBytes = new byte[n];
+
+                    for (int offset = 0; offset < n; offset++)
+                    {
+                        spriteBytes[offset] = this.ram[this.i  + offset];
+                    }
+
+                    int voffset = 0;
+                    foreach (var data in spriteBytes)
+                    {
+                        this.screen.DrawSpriteByte(data, this.v[x], this.v[y] + voffset);
+
+                        voffset ++;
+                    }
                 }
 
                 break;
