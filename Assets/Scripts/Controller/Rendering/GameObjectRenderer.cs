@@ -34,6 +34,7 @@ public class GameObjectRenderer : BaseUnityRenderer
         }
 
         var go = Instantiate(this.pseudoPixelPrefab);
+        go.SetActive(false);
         this.pseudoPixelPool.Add(go);
 
         go.transform.parent = this.pseudoPixelAnchor;
